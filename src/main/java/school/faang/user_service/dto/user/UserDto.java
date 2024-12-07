@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import school.faang.user_service.entity.Country;
 
 @Data
 @NoArgsConstructor
@@ -19,11 +20,16 @@ public class UserDto {
     @Size(min = 1, max = 64, message = "Username should be between 1 and 64 characters long")
     private String username;
 
+    @Size(min = 1, max = 64, message = "Username should be between 1 and 64 characters long")
+    private String password;
+
     @NotBlank(message = "Email should not be blank")
     @NotEmpty(message = "Email should not be empty")
     @Email(message = "Email should be a valid email address")
     @Size(min = 1, max = 64, message = "Email should be between 1 and 64 characters long")
     private String email;
+
+    private Country country;
 
     @Size(max = 4096, message = "About Me section should not exceed 4096 characters")
     private String aboutMe;
@@ -35,4 +41,8 @@ public class UserDto {
 
     @Size(min = 1, max = 64, message = "City name should be between 1 and 64 characters long")
     private String city;
+
+    private String preference;
+
+    private String locale;
 }

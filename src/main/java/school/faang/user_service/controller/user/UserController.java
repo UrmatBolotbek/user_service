@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -41,6 +43,14 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
     private final UserContext userContext;
+
+
+    @PostMapping
+    public void createUser(
+            @RequestBody UserDto userDto,
+            @RequestHeader(value = "Accept-Language", required = false) String acceptLanguage) {
+        userService.createUser(userDto, acceptLanguage);
+    }
 
     @Operation(
             summary = "Deactivate a user",

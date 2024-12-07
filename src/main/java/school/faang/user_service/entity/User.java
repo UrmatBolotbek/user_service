@@ -5,6 +5,8 @@ import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -26,6 +28,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import school.faang.user_service.entity.contact.Contact;
 import school.faang.user_service.entity.contact.ContactPreference;
+import school.faang.user_service.entity.contact.PreferredContact;
 import school.faang.user_service.entity.event.Event;
 import school.faang.user_service.entity.event.Rating;
 import school.faang.user_service.entity.goal.Goal;
@@ -165,4 +168,9 @@ public class User {
     @OneToOne(mappedBy = "user")
     @EqualsAndHashCode.Exclude
     private UserPromotion promotion;
+
+    @Enumerated(EnumType.STRING)
+    private PreferredContact preference;
+
+    private String locale;
 }
