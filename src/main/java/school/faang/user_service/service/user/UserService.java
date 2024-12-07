@@ -67,6 +67,7 @@ public class UserService {
 
         userRepository.save(user);
     }
+
     @Transactional
     public void deactivateUser(Long userId) {
         User user = userValidator.validateUser(userId);
@@ -105,6 +106,7 @@ public class UserService {
 
     public UserDto getUser(long userId) {
         User user = userValidator.validateUser(userId);
+        user.setCountry(new Country());
         return userMapper.toDto(user);
     }
 

@@ -44,7 +44,6 @@ public class UserController {
     private final UserService userService;
     private final UserContext userContext;
 
-
     @PostMapping
     public void createUser(
             @RequestBody UserDto userDto,

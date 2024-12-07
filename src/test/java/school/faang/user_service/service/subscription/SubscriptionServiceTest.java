@@ -7,8 +7,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import school.faang.user_service.dto.FollowerEvent;
 import school.faang.user_service.dto.user.UserFilterDto;
 import school.faang.user_service.mapper.user.UserMapper;
+import school.faang.user_service.publisher.subscription.FollowerEventPublisher;
 import school.faang.user_service.repository.SubscriptionRepository;
 import school.faang.user_service.service.user.filter.UserFilter;
 import school.faang.user_service.validator.subscription.SubscriptionValidator;
@@ -33,6 +35,8 @@ public class SubscriptionServiceTest {
     private List<UserFilter> filters;
     @Mock
     private UserFilter filter;
+    @Mock
+    private FollowerEventPublisher followerEventPublisher;
 
     private final long followerId = 4L;
     private final long followeeId = 3L;
@@ -42,6 +46,8 @@ public class SubscriptionServiceTest {
     public void testFollowUserSuccess() {
         subscriptionService.followUser(followerId, followeeId);
 
+        verify(followerEventPublisher, times(1))
+                .publish(new FollowerEvent(followerId, followeeId));
         verify(subscriptionValidator, times(1))
                 .validateUserIsTryingToCallHimself(followerId, followeeId);
         verify(subscriptionValidator, times(1))
