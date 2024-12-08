@@ -18,8 +18,11 @@ import school.faang.user_service.repository.SkillRepository;
 import school.faang.user_service.repository.event.EventRepository;
 import school.faang.user_service.service.event.event_filters.EventFilter;
 import school.faang.user_service.validator.event.EventServiceValidator;
+import school.faang.user_service.scheduler.event.EventStartNotificationScheduler;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -33,6 +36,7 @@ public class EventService {
     private final EventMapper eventMapper;
     private final List<EventFilter> eventFilters;
     private final SkillRepository skillRepository;
+    private final EventStartNotificationScheduler eventStartNotificationScheduler;
 
     @Value("${app.event.batch.size}")
     private int batchSize;
@@ -46,7 +50,14 @@ public class EventService {
         event.setId(null);
         event = addRealtedSkillsToEvent(eventDto, event);
 
-        log.info("New event saved to the database;");
+        ZonedDateTime startTime = event.getStartDate().atZone(ZoneId.systemDefault());
+        eventStartNotificationScheduler.scheduleEventStartNotification(
+                event.getId(),
+                event.getAttendees().stream().map(User::getId).toList(),
+                startTime
+        );
+
+        log.info("New event saved to the database and Quartz job scheduled for event start;");
         return eventMapper.toDto(event);
     }
 
@@ -79,7 +90,6 @@ public class EventService {
         eventServiceValidator.validateOwnerSkills(eventOwner, eventDto);
 
         Event event = eventMapper.toEntity(eventDto);
-
         Event updatedEvent = addRealtedSkillsToEvent(eventDto, event);
 
         log.info("An updated event with id {} has been saved to the database", eventToUpdate.getId());
