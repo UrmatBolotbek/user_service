@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import school.faang.user_service.config.context.UserContext;
-import school.faang.user_service.dto.user.NotificationUserDto;
 import school.faang.user_service.dto.user.UserDto;
 import school.faang.user_service.dto.user.UserFilterDto;
 import school.faang.user_service.service.user.UserService;
@@ -71,16 +70,6 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     public UserDto getUser(@PathVariable @NotNull(message = "User ID should not be null") Long userId) {
         return userService.getUser(userId);
-    }
-
-    @Operation(
-            summary = "Get user by ID to send it to Notification Service",
-            description = "Retrieve a user by their ID and turns it into Notification UserDTO"
-    )
-    @GetMapping("/{id}/notification")
-    @ResponseStatus(HttpStatus.OK)
-    public NotificationUserDto getUserForNotification(@PathVariable Long id) {
-        return userService.getNotificationUserDto(id);
     }
 
     @Operation(

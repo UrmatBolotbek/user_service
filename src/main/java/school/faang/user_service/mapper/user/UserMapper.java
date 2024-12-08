@@ -5,7 +5,6 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.ReportingPolicy;
 import school.faang.user_service.dto.promotion.UserResponseDto;
-import school.faang.user_service.dto.user.NotificationUserDto;
 import school.faang.user_service.dto.user.UserDto;
 import school.faang.user_service.entity.User;
 import school.faang.user_service.entity.promotion.UserPromotion;
@@ -24,6 +23,7 @@ public interface UserMapper {
 
     User toUser(UserDto userDto);
 
+    @Mapping(source = "contactPreference.preference", target = "preference")
     UserDto toDto(User user);
 
     List<UserDto> toListDto(List<User> users);
@@ -46,9 +46,6 @@ public interface UserMapper {
     @Mapping(target = "education", source = ".", qualifiedByName = "toEducation" )
     @Mapping(target = "previousEducation", source = ".", qualifiedByName = "toPreviousEducation" )
     PersonFromFile convertFlatToNested(PersonFlat personFlat);
-
-    @Mapping(source = "contactPreference.preference", target = "preference")
-    NotificationUserDto userToNotificationUserDto(User user);
 
     @Named("mapTariff")
     default String mapTariff(UserPromotion userPromotion) {
