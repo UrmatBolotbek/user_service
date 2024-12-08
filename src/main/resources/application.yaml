@@ -24,16 +24,11 @@ spring:
       port: 6379
       host: localhost
       channels:
-        goal-completed-channel:
-          name: goal-completed
-        mentorship-channel:
-          name: mentorship_channel
-        follower-event-channel:
-          name: follower_event
-        event-start-event-channel:
-          name: event-start-channel
-        event-start-reminder-event-channel:
-          name: event-start-reminder-event-channel
+        goal-completed-channel: goal-completed
+        mentorship-channel: mentorship_channel
+        follower-event-channel: follower_event
+        event-start-event-channel: event-start-channel
+        event-start-reminder-event-channel: event-start-reminder-event-channel
 
 server:
   port: 8080
