@@ -14,7 +14,7 @@ import school.faang.user_service.dto.user.SearchAppearanceEvent;
 @Slf4j
 public class SearchAppearanceEventPublisher {
 
-    @Value("${spring.data.redis.channels.search-appearance-channel.name}")
+    @Value("${spring.data.redis.channels.search-appearance-channel}")
     private String topicSearchAppearanceEvent;
 
     private RedisTemplate<String, Object> redisTemplate;
