@@ -24,14 +24,12 @@ spring:
       port: 6379
       host: localhost
       channels:
-        goal-completed-channel:
-          name: goal-completed
-        mentorship-channel:
-          name: mentorship_channel
-        follower-event-channel:
-          name: follower_event
-        search-appearance-channel:
-          name: search_appearance_event
+        goal-completed-channel: goal-completed
+        mentorship-channel: mentorship_channel
+        follower-event-channel: follower_event
+        event-start-event-channel: event-start-channel
+        event-start-reminder-event-channel: event-start-reminder-event-channel
+        search-appearance-channel: search-appearance-event
 
 server:
   port: 8080
@@ -51,8 +49,11 @@ payment-service:
   url: http://${payment-service.host}:${payment-service.port}${payment-service.base-path}
 
 app:
-  goal:
-    max-active-per-user: 3
+  event:
+    batch:
+      size: 10
+    clear:
+      cron: "0 0 0 * * *"
   promotion:
     user_promotion_views_decrement_cron: '*/10 * * * * *'
     event__promotion_views_decrement_cron: '*/10 * * * * *'
@@ -76,6 +77,11 @@ app:
       max_pool_size: 20
       queue_capacity: 1000
       thread_name_prefix: PremiumService-Async-
+    task-executor:
+      core-pool-size: 10
+      max-pool-size: 20
+      queue-capacity: 1000
+      thread-name-prefix: TaskExecutor-
 
 services:
   s3:
