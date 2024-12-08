@@ -9,11 +9,13 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
+import school.faang.user_service.dto.user.ProfilePicEvent;
 import school.faang.user_service.dto.user.UserDto;
 import school.faang.user_service.entity.Country;
 import school.faang.user_service.entity.User;
 import school.faang.user_service.entity.UserProfilePic;
 import school.faang.user_service.mapper.user.UserMapperImpl;
+import school.faang.user_service.publisher.profile_pic.ProfilePicEventPublisher;
 import school.faang.user_service.repository.CountryRepository;
 import school.faang.user_service.repository.UserRepository;
 import school.faang.user_service.repository.event.EventRepository;
@@ -60,6 +62,9 @@ class UserServiceTest {
 
     @Mock
     private S3Service s3Service;
+
+    @Mock
+    private ProfilePicEventPublisher eventPublisher;
 
     @Mock
     private PasswordGenerator passwordGenerator;
@@ -136,6 +141,8 @@ class UserServiceTest {
 
         verify(s3Service, times(1)).uploadFile(file, user);
         verify(userRepository, times(1)).save(user);
+        ProfilePicEvent picEvent = new ProfilePicEvent(userId, user.getUserProfilePic().getFileId());
+        verify(eventPublisher).publish(picEvent);
     }
 
     @Test
