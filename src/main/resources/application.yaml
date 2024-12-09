@@ -30,6 +30,8 @@ spring:
         event-start-event-channel: event-start-channel
         event-start-reminder-event-channel: event-start-reminder-event-channel
         search-appearance-channel: search-appearance-topic
+        recommendation-received-channel: recommendation-received
+
 
 server:
   port: 8080
@@ -52,8 +54,7 @@ app:
   event:
     batch:
       size: 10
-    clear:
-      cron: "0 0 0 * * *"
+    cron: "0 0 0 * * *"
   promotion:
     user_promotion_views_decrement_cron: '*/10 * * * * *'
     event__promotion_views_decrement_cron: '*/10 * * * * *'
