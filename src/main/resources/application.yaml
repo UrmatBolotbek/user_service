@@ -29,6 +29,7 @@ spring:
         follower-event-channel: follower_event
         event-start-event-channel: event-start-channel
         event-start-reminder-event-channel: event-start-reminder-event-channel
+        search-appearance-channel: search-appearance-topic
         recommendation-received-channel: recommendation-received
 
 
