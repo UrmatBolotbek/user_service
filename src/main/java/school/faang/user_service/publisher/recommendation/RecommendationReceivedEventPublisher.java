@@ -12,7 +12,7 @@ import school.faang.user_service.publisher.EventPublisherAbstract;
 @Slf4j
 public class RecommendationReceivedEventPublisher extends EventPublisherAbstract<RecommendationReceivedEvent> {
 
-    @Value("${spring.data.redis.channels.recommendation-received-channel.name}")
+    @Value("${spring.data.redis.channels.recommendation-received-channel}")
     private String topicRecommendationReceived;
 
     public RecommendationReceivedEventPublisher(RedisTemplate<String, Object> redisTemplate, ObjectMapper objectMapper) {
