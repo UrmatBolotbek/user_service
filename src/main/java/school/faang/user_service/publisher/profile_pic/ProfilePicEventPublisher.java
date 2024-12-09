@@ -12,7 +12,7 @@ import school.faang.user_service.publisher.EventPublisherAbstract;
 @Slf4j
 public class ProfilePicEventPublisher extends EventPublisherAbstract<ProfilePicEvent> {
 
-    @Value("${spring.data.redis.channels.profile_pic_channel.name}")
+    @Value("${spring.data.redis.channels.profile-pic-channel}")
     private String profilePic;
 
 

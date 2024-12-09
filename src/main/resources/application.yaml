@@ -30,6 +30,7 @@ spring:
         event-start-event-channel: event-start-channel
         event-start-reminder-event-channel: event-start-reminder-event-channel
         recommendation-received-channel: recommendation-received
+        profile-pic-channel: profile-pic-channel
 
 
 server:
