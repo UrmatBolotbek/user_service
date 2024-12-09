@@ -4,12 +4,14 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import school.faang.user_service.config.context.UserContext;
+import school.faang.user_service.dto.user.SearchAppearanceEvent;
 import school.faang.user_service.dto.user.UserDto;
 import school.faang.user_service.dto.user.UserFilterDto;
 import school.faang.user_service.entity.Country;
@@ -31,6 +33,7 @@ import java.io.ByteArrayInputStream;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -127,32 +130,33 @@ class UserServiceTest {
 
     @Test
     void testGetUserWithFiltersAndRedis() {
-            UserFilterDto filterDto = new UserFilterDto();
-            when(userContext.getUserId()).thenReturn(2L);
-            when(userRepository.findAll()).thenReturn(List.of(user));
+        UserFilterDto filterDto = new UserFilterDto();
+        long searchingUserId = 2L;
 
-            UserFilter applicableFilter = mock(UserFilter.class);
-            when(applicableFilter.isApplicable(filterDto)).thenReturn(true);
-            when(applicableFilter.apply(any(Stream.class), eq(filterDto)))
-                    .thenAnswer(invocation -> invocation.getArgument(0));
+        when(userContext.getUserId()).thenReturn(searchingUserId);
+        when(userRepository.findAll()).thenReturn(List.of(user));
 
-            when(userFilters.iterator()).thenReturn(List.of(applicableFilter).iterator());
+        UserFilter mockFilter = mock(UserFilter.class);
+        when(mockFilter.isApplicable(filterDto)).thenReturn(true);
+        when(mockFilter.apply(any(Stream.class), eq(filterDto)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+        when(userFilters.iterator()).thenReturn(List.of(mockFilter).iterator());
+        when(userRepository.findAllById(List.of(1L))).thenReturn(List.of(user));
 
-            Stream<UserDto> resultStream = userService.getUser(filterDto);
-            List<UserDto> result = resultStream.toList();
+        Stream<UserDto> result = userService.getUser(filterDto);
 
-            assertNotNull(result, "Result can't be null");
-            assertEquals(1, result.size(), "1 user should be");
-            assertEquals(userId, result.get(0).getId(), "User IDs should be same");
+        ArgumentCaptor<SearchAppearanceEvent> captor = ArgumentCaptor.forClass(SearchAppearanceEvent.class);
+        verify(searchAppearanceEventPublisher).publish(captor.capture());
 
-            verify(searchAppearanceEventPublisher).publish(argThat(event ->
-                    event.getUserId() == userId &&
-                            event.getSearchingUserId() == 2L
-            ));
-            verify(userMapper).toDto(user);
-            verify(applicableFilter).isApplicable(filterDto);
-            verify(applicableFilter).apply(any(Stream.class), eq(filterDto));
-        }
+        SearchAppearanceEvent capturedEvent = captor.getValue();
+        assertEquals(List.of(1L), capturedEvent.getUserIds());
+        assertEquals(searchingUserId, capturedEvent.getSearchingUserId());
+        assertNotNull(capturedEvent.getViewedAt());
+
+        List<UserDto> resultList = result.toList();
+        assertEquals(1, resultList.size());
+        assertEquals(user.getId(), resultList.get(0).getId());
+    }
 
     @Test
     public void testGetUsersByIdsSuccess() {

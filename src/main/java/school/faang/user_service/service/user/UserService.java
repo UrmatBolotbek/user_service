@@ -85,6 +85,7 @@ public class UserService {
         log.info("User with ID {} has been scheduled for the deactivation", userId);
     }
 
+    @Transactional
     public Stream<UserDto> getUser(UserFilterDto filterDto) {
 
         long searchingUserId = userContext.getUserId();
@@ -96,10 +97,17 @@ public class UserService {
             }
         }
 
-        return usersStream.peek(user -> {
-            long userId = user.getId();
-            searchAppearanceEventPublisher.publish(new SearchAppearanceEvent(userId, searchingUserId, LocalDateTime.now()));
-        }).map(userMapper::toDto);
+        List<Long> userIds = usersStream.map(User::getId).toList();
+
+        if (!userIds.isEmpty()) {
+            searchAppearanceEventPublisher.publish(
+                    new SearchAppearanceEvent(userIds, searchingUserId, LocalDateTime.now())
+            );
+        }
+
+        return userRepository.findAllById(userIds)
+                .stream()
+                .map(userMapper::toDto);
     }
 
     public UserDto getUser(long userId) {
