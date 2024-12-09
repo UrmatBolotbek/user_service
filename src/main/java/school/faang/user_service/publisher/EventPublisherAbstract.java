@@ -10,8 +10,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 @Slf4j
 public abstract class EventPublisherAbstract<T> {
 
-    protected final RedisTemplate<String, Object> redisTemplate;
-    protected final ObjectMapper objectMapper;
+    private final RedisTemplate<String, Object> redisTemplate;
+    private final ObjectMapper objectMapper;
 
     protected void handleEvent(T event, String topic) {
         try {
@@ -22,5 +22,4 @@ public abstract class EventPublisherAbstract<T> {
             throw new RuntimeException(e);
         }
     }
-
 }
