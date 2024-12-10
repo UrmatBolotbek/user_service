@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import school.faang.user_service.dto.recommendation.RecommendationEvent;
 import school.faang.user_service.dto.recommendation.RecommendationReceivedEvent;
 import school.faang.user_service.dto.recommendation.RequestRecommendationDto;
 import school.faang.user_service.dto.recommendation.ResponseRecommendationDto;
@@ -22,6 +23,7 @@ import school.faang.user_service.entity.recommendation.SkillOffer;
 import school.faang.user_service.entity.recommendation.SkillRequest;
 import school.faang.user_service.exception.DataValidationException;
 import school.faang.user_service.mapper.recommendation.RecommendationMapper;
+import school.faang.user_service.publisher.recommendation.RecommendationEventPublisher;
 import school.faang.user_service.publisher.recommendation.RecommendationReceivedEventPublisher;
 import school.faang.user_service.repository.SkillRepository;
 import school.faang.user_service.repository.recommendation.RecommendationRepository;
@@ -74,6 +76,9 @@ public class RecommendationServiceTest {
     private RecommendationReceivedEventPublisher publisher;
 
     @Mock
+    private RecommendationEventPublisher recommendationEventPublisher;
+
+    @Mock
     private RecommendationMapper recommendationMapper;
 
     private Skill skill;
@@ -83,6 +88,7 @@ public class RecommendationServiceTest {
     private List<Recommendation> recommendations;
     private List<ResponseRecommendationDto> recommendationDtos;
     private RecommendationRequest recommendationRequest;
+    private RecommendationEvent recommendationEvent;
 
     @BeforeEach
     public void setUp() {
@@ -148,6 +154,12 @@ public class RecommendationServiceTest {
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
+
+        recommendationEvent = RecommendationEvent.builder()
+                .authorId(AUTHOR_ID)
+                .receiverId(RECEIVER_ID)
+                .content(CONTENT)
+                .build();
     }
 
     @Test
@@ -167,6 +179,7 @@ public class RecommendationServiceTest {
         verify(recommendationMapper).toDto(recommendation);
         RecommendationReceivedEvent event = new RecommendationReceivedEvent(AUTHOR_ID, RECEIVER_ID, RECOMMENDATION_ID);
         verify(publisher).publish(event);
+        verify(recommendationEventPublisher).publish(recommendationEvent);
     }
 
     @Test
