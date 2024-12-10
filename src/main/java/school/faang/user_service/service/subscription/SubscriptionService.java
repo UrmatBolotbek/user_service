@@ -14,6 +14,7 @@ import school.faang.user_service.repository.SubscriptionRepository;
 import school.faang.user_service.service.user.filter.UserFilter;
 import school.faang.user_service.validator.subscription.SubscriptionValidator;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -32,7 +33,7 @@ public class SubscriptionService {
         subscriptionValidator.validateUserIsTryingToCallHimself(followerId, followeeId);
         subscriptionValidator.validateUserAlreadyHasThisSubscription(followerId, followeeId);
         subscriptionRepository.followUser(followerId, followeeId);
-        followerEventPublisher.publish(new FollowerEvent(followerId, followeeId));
+        followerEventPublisher.publish(new FollowerEvent(followerId, followeeId, LocalDateTime.now()));
 
         log.info("User with id {} subscribed to user with id {}", followerId, followeeId);
     }
