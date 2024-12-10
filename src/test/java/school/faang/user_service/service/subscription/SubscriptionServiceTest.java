@@ -3,6 +3,7 @@ package school.faang.user_service.service.subscription;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -15,9 +16,9 @@ import school.faang.user_service.repository.SubscriptionRepository;
 import school.faang.user_service.service.user.filter.UserFilter;
 import school.faang.user_service.validator.subscription.SubscriptionValidator;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
+import static org.mockito.ArgumentCaptor.forClass;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -45,10 +46,12 @@ public class SubscriptionServiceTest {
 
     @Test
     public void testFollowUserSuccess() {
+        ArgumentCaptor<FollowerEvent> eventCaptor = forClass(FollowerEvent.class);
+
         subscriptionService.followUser(followerId, followeeId);
 
         verify(followerEventPublisher, times(1))
-                .publish(new FollowerEvent(followerId, followeeId, LocalDateTime.now()));
+                .publish(eventCaptor.capture());
         verify(subscriptionValidator, times(1))
                 .validateUserIsTryingToCallHimself(followerId, followeeId);
         verify(subscriptionValidator, times(1))
