@@ -7,7 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import school.faang.user_service.dto.FollowerEvent;
+import school.faang.user_service.dto.subscription.FollowerEvent;
 import school.faang.user_service.dto.user.UserFilterDto;
 import school.faang.user_service.mapper.user.UserMapper;
 import school.faang.user_service.publisher.subscription.FollowerEventPublisher;
@@ -15,6 +15,7 @@ import school.faang.user_service.repository.SubscriptionRepository;
 import school.faang.user_service.service.user.filter.UserFilter;
 import school.faang.user_service.validator.subscription.SubscriptionValidator;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.Mockito.times;
@@ -47,7 +48,7 @@ public class SubscriptionServiceTest {
         subscriptionService.followUser(followerId, followeeId);
 
         verify(followerEventPublisher, times(1))
-                .publish(new FollowerEvent(followerId, followeeId));
+                .publish(new FollowerEvent(followerId, followeeId, LocalDateTime.now()));
         verify(subscriptionValidator, times(1))
                 .validateUserIsTryingToCallHimself(followerId, followeeId);
         verify(subscriptionValidator, times(1))

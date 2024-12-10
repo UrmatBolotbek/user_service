@@ -1,4 +1,4 @@
-package school.faang.user_service.dto;
+package school.faang.user_service.dto.subscription;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,5 +10,5 @@ import java.time.LocalDateTime;
 public class FollowerEvent {
     private long followerId;
     private long followeeId;
-    LocalDateTime receivedAt;
+    private LocalDateTime receivedAt;
 }
