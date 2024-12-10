@@ -23,10 +23,10 @@ spring:
     redis:
       port: 6379
       host: localhost
-      channel:
-        follower: follower_channel
-        mentorship-channel: mentorship_channel
-        achievement: achievement_channel
+      channels:
+        follower: follower-channel
+        mentorship-channel: mentorship-channel
+        achievement: achievement-channel
         goal-completed-channel: goal-completed
 
 
