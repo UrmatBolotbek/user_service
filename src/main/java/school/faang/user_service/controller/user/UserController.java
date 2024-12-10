@@ -65,9 +65,9 @@ public class UserController {
             summary = "Get users by filters",
             description = "Retrieve a list of users based on filter criteria"
     )
-    @GetMapping
+    @GetMapping("/filter")
     @ResponseStatus(HttpStatus.OK)
-    public List<UserDto> getUsers(@Valid @ModelAttribute UserFilterDto filterDto) {
+    public List<UserDto> getUsersByFilter(@Valid @ModelAttribute UserFilterDto filterDto) {
         return userService.getUser(filterDto).toList();
     }
 
@@ -85,7 +85,7 @@ public class UserController {
             summary = "Get users by a list of IDs",
             description = "Retrieve a list of users by their IDs"
     )
-    @GetMapping("{ids}")
+    @GetMapping()
     @ResponseStatus(HttpStatus.OK)
     public List<UserDto> getUsersByIds(
             @RequestParam @NotNull(message = "The list of IDs should not be null")

@@ -7,8 +7,8 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import school.faang.user_service.entity.Country;
 import school.faang.user_service.entity.contact.PreferredContact;
+import school.faang.user_service.entity.Country;
 
 @Data
 @NoArgsConstructor
@@ -42,6 +42,8 @@ public class UserDto {
 
     @Size(min = 1, max = 64, message = "City name should be between 1 and 64 characters long")
     private String city;
+
+    private Long telegramChatId;
 
     private PreferredContact preference;
 
