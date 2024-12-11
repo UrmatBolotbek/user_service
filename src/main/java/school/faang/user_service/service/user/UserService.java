@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import school.faang.user_service.dto.user.ProfilePicEvent;
 import school.faang.user_service.config.context.UserContext;
 import school.faang.user_service.dto.user.SearchAppearanceEvent;
 import school.faang.user_service.dto.user.UserDto;
@@ -19,6 +20,7 @@ import school.faang.user_service.entity.UserProfilePic;
 import school.faang.user_service.mapper.user.UserMapper;
 import school.faang.user_service.pojo.person.PersonFlat;
 import school.faang.user_service.pojo.person.PersonFromFile;
+import school.faang.user_service.publisher.profile_pic.ProfilePicEventPublisher;
 import school.faang.user_service.publisher.user.SearchAppearanceEventPublisher;
 import school.faang.user_service.repository.CountryRepository;
 import school.faang.user_service.repository.UserRepository;
@@ -59,6 +61,7 @@ public class UserService {
     private final AvatarLibrary avatarLibrary;
     private final RestTemplate restTemplate;
     private final PasswordGenerator passwordGenerator;
+    private final ProfilePicEventPublisher eventPublisher;
 
     @Transactional
     public void deactivateUser(Long userId) {
@@ -124,6 +127,8 @@ public class UserService {
         User user = userValidator.validateUser(userId);
         s3Service.uploadFile(file, user);
         userRepository.save(user);
+        ProfilePicEvent picEvent = new ProfilePicEvent(userId, user.getUserProfilePic().getFileId());
+        eventPublisher.publish(picEvent);
     }
 
     public byte[] getAvatar(long userId) {
