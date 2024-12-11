@@ -67,13 +67,12 @@ public class UserService {
     public void createUser(UserDto userDto, String acceptLanguage) {
         User user = userMapper.toUser(userDto);
         Locale locale;
-        if (acceptLanguage == null) {
+        if (acceptLanguage == null || Locale.forLanguageTag(acceptLanguage).toLanguageTag().equals("und")) {
             locale = Locale.getDefault();
         } else {
             locale = Locale.forLanguageTag(acceptLanguage);
         }
         user.setLocale(locale.toLanguageTag());
-
         userRepository.save(user);
     }
 
@@ -129,7 +128,6 @@ public class UserService {
 
     public UserDto getUser(long userId) {
         User user = userValidator.validateUser(userId);
-        user.setCountry(new Country());
         return userMapper.toDto(user);
     }
 
