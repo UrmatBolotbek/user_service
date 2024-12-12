@@ -33,6 +33,7 @@ import school.faang.user_service.validator.user.UserValidator;
 
 import java.io.ByteArrayInputStream;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Stream;
 import java.time.LocalDateTime;
@@ -42,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -103,7 +105,21 @@ class UserServiceTest {
     }
 
     @Test
-    void testDeactivateUser_Success() {
+    public void testCreateUser() {
+        String acceptLanguage = "en_US";
+        when(userMapper.toUser(new UserDto())).thenReturn(user);
+
+        userService.createUser(new UserDto(), acceptLanguage);
+
+        Locale locale = Locale.forLanguageTag(acceptLanguage);
+        user.setLocale(locale.toLanguageTag());
+
+        assertNotNull(locale);
+        verify(userRepository, times(1)).save(user);
+    }
+
+    @Test
+    public void testDeactivateUser_Success() {
         user.setActive(true);
 
         when(userValidator.validateUser(userId)).thenReturn(user);

@@ -3,14 +3,18 @@ package school.faang.user_service.service.subscription;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import school.faang.user_service.dto.subscription.FollowerEvent;
 import school.faang.user_service.dto.user.UserDto;
 import school.faang.user_service.dto.user.UserFilterDto;
 import school.faang.user_service.entity.User;
 import school.faang.user_service.mapper.user.UserMapper;
+import school.faang.user_service.publisher.subscription.FollowerEventPublisher;
 import school.faang.user_service.repository.SubscriptionRepository;
 import school.faang.user_service.service.user.filter.UserFilter;
 import school.faang.user_service.validator.subscription.SubscriptionValidator;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -22,13 +26,16 @@ public class SubscriptionService {
     private final SubscriptionRepository subscriptionRepository;
     private final UserMapper userMapper;
     private final List<UserFilter> userFilters;
+    private final FollowerEventPublisher followerEventPublisher;
 
+    @Transactional
     public void followUser(long followerId, long followeeId) {
         subscriptionValidator.validateUserIsTryingToCallHimself(followerId, followeeId);
         subscriptionValidator.validateUserAlreadyHasThisSubscription(followerId, followeeId);
         subscriptionRepository.followUser(followerId, followeeId);
+        followerEventPublisher.publish(new FollowerEvent(followerId, followeeId, LocalDateTime.now()));
 
-        log.info("User {} subscribed to user {}", followerId, followeeId);
+        log.info("User with id {} subscribed to user with id {}", followerId, followeeId);
     }
 
     public void unfollowUser(long followerId, long followeeId) {
