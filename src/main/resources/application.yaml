@@ -33,6 +33,7 @@ spring:
         recommendation-received-channel: recommendation-received
         profile-pic-channel: profile-pic-channel
         recommendation-channel: recommendation-given
+        premium-bought-channel: premium-bought
 
 server:
   port: 8080
