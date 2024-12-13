@@ -24,6 +24,7 @@ public interface UserMapper {
     User toUser(UserDto userDto);
 
     @Mapping(source = "contactPreference.preference", target = "preference")
+    @Mapping(source = "country.title", target = "countryTitle")
     UserDto toDto(User user);
 
     List<UserDto> toListDto(List<User> users);

@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import school.faang.user_service.entity.contact.PreferredContact;
-import school.faang.user_service.entity.Country;
 
 @Data
 @NoArgsConstructor
@@ -30,13 +29,13 @@ public class UserDto {
     @Size(min = 1, max = 64, message = "Email should be between 1 and 64 characters long")
     private String email;
 
-    private Country country;
-
     @Size(max = 4096, message = "About Me section should not exceed 4096 characters")
     private String aboutMe;
 
     @Size(max = 32, message = "Phone number should not exceed 32 characters")
     private String phone;
+
+    private String countryTitle;
 
     private Integer experience;
 
