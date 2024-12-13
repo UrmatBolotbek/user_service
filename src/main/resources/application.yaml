@@ -32,6 +32,7 @@ spring:
         search-appearance-channel: search-appearance-topic
         recommendation-received-channel: recommendation-received
         profile-pic-channel: profile-pic-channel
+        recommendation-channel: recommendation-given
 
 server:
   port: 8080
