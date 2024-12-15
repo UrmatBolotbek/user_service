@@ -32,7 +32,7 @@ public class ProjectFollowerControllerTest {
         Long userId = 1L;
         Long projectId= 10L;
         when(userContext.getUserId()).thenReturn(userId);
-        mockMvc.perform(post("/api/v1/subscribe/"+projectId)
+        mockMvc.perform(post("/api/v1/subscribe/project/"+projectId)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Subscription successful"));

@@ -18,7 +18,7 @@ public class ProjectFollowerController {
     private final ProjectFollowerService projectFollowerService;
     private final UserContext userContext;
 
-    @PostMapping("/{projectId}")
+    @PostMapping("/project/{projectId}")
     public ResponseEntity<String> subscribeToProject(@PathVariable("projectId") Long projectId) {
         Long userId = userContext.getUserId();
         log.info("User {} is subscribing to project {}", userId, projectId);
