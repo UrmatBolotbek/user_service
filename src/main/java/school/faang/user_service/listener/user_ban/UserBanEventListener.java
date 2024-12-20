@@ -24,7 +24,6 @@ public class UserBanEventListener extends AbstractEventListener<UserForBanEventD
         this.userService = userService;
     }
 
-
     @Override
     public void onMessage(Message message, byte[] pattern) {
         handleEvent(message, UserForBanEventDto.class, userService::banUser);
