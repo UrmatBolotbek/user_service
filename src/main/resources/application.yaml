@@ -34,6 +34,8 @@ spring:
         profile-pic-channel: profile-pic-channel
         recommendation-channel: recommendation-given
         premium-bought-channel: premium-bought
+        ban-channel: user-ban
+
 
 server:
   port: 8080
