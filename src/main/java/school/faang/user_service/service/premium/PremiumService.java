@@ -5,11 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import school.faang.user_service.dto.payment.PaymentResponseDto;
+import school.faang.user_service.dto.premium.PremiumBoughtEvent;
 import school.faang.user_service.dto.premium.ResponsePremiumDto;
 import school.faang.user_service.entity.User;
 import school.faang.user_service.entity.premium.Premium;
 import school.faang.user_service.entity.premium.PremiumPeriod;
 import school.faang.user_service.mapper.premium.PremiumMapper;
+import school.faang.user_service.publisher.premium.PremiumBoughtEventPublisher;
 import school.faang.user_service.repository.premium.PremiumRepository;
 import school.faang.user_service.service.payment.PaymentService;
 import school.faang.user_service.validator.premium.PremiumValidator;
@@ -17,6 +19,8 @@ import school.faang.user_service.validator.user.UserValidator;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static java.time.LocalDateTime.now;
 
 @Slf4j
 @Service
@@ -28,6 +32,7 @@ public class PremiumService {
     private final PremiumValidator premiumValidator;
     private final UserValidator userValidator;
     private final PremiumBuilder premiumBuilder;
+    private final PremiumBoughtEventPublisher publisher;
 
     @Transactional
     public ResponsePremiumDto buyPremium(long userId, PremiumPeriod premiumPeriod) {
@@ -46,6 +51,7 @@ public class PremiumService {
         premium = premiumRepository.save(premium);
         log.debug("Premium saved for userId: {} with paymentNumber: {}", userId, paymentResponse.getPaymentNumber());
 
+        publishEvent(premium, paymentResponse, premiumPeriod);
         return premiumMapper.toDto(premium);
     }
 
@@ -58,5 +64,16 @@ public class PremiumService {
     public void deleteAllPremiumsById(List<Premium> premiums) {
         log.info("Delete all premiums");
         premiumRepository.deleteAllInBatch(premiums);
+    }
+
+    private void publishEvent(Premium premium, PaymentResponseDto paymentResponse, PremiumPeriod period) {
+        PremiumBoughtEvent event = PremiumBoughtEvent.builder()
+                .userId(premium.getUser().getId())
+                .amount(paymentResponse.getAmount())
+                .period(period.getDays())
+                .purchaseDate(now())
+                .build();
+
+        publisher.publish(event);
     }
 }

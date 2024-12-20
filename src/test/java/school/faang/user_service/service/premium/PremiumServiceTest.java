@@ -3,16 +3,19 @@ package school.faang.user_service.service.premium;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import school.faang.user_service.dto.payment.PaymentResponseDto;
+import school.faang.user_service.dto.premium.PremiumBoughtEvent;
 import school.faang.user_service.dto.premium.ResponsePremiumDto;
 import school.faang.user_service.entity.User;
 import school.faang.user_service.entity.payment.PaymentStatus;
 import school.faang.user_service.entity.premium.Premium;
 import school.faang.user_service.entity.premium.PremiumPeriod;
 import school.faang.user_service.mapper.premium.PremiumMapper;
+import school.faang.user_service.publisher.premium.PremiumBoughtEventPublisher;
 import school.faang.user_service.repository.premium.PremiumRepository;
 import school.faang.user_service.service.payment.PaymentService;
 import school.faang.user_service.validator.premium.PremiumValidator;
@@ -34,6 +37,7 @@ import static school.faang.user_service.service.premium.util.PremiumFabric.getUs
 
 @ExtendWith(MockitoExtension.class)
 class PremiumServiceTest {
+
     private static final long USER_ID = 1L;
     private static final PremiumPeriod PERIOD = PremiumPeriod.ONE_MONTH;
     private static final String MESSAGE = "test message";
@@ -61,6 +65,9 @@ class PremiumServiceTest {
     @Mock
     private PremiumMapper premiumMapper;
 
+    @Mock
+    private PremiumBoughtEventPublisher publisher;
+
     @InjectMocks
     private PremiumService premiumService;
 
@@ -87,6 +94,13 @@ class PremiumServiceTest {
         verify(premiumBuilder).buildPremium(user, PERIOD);
         verify(premiumRepository).save(any(Premium.class));
         verify(premiumMapper).toDto(premium);
+
+        ArgumentCaptor<PremiumBoughtEvent> eventCaptor = ArgumentCaptor.forClass(PremiumBoughtEvent.class);
+        verify(publisher).publish(eventCaptor.capture());
+        PremiumBoughtEvent publishedEvent = eventCaptor.getValue();
+        assertEquals(USER_ID, publishedEvent.getUserId());
+        assertEquals(PERIOD.getDays(), publishedEvent.getPeriod());
+        assertEquals(successResponse.getAmount(), publishedEvent.getAmount());
 
         assertEquals(expectedResponseDto, actualResponseDto);
     }

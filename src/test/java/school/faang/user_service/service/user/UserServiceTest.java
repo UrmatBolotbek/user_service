@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
+import school.faang.user_service.dto.user.ProfilePicEvent;
 import school.faang.user_service.config.context.UserContext;
 import school.faang.user_service.dto.user.SearchAppearanceEvent;
 import school.faang.user_service.dto.user.UserDto;
@@ -18,6 +19,7 @@ import school.faang.user_service.entity.Country;
 import school.faang.user_service.entity.User;
 import school.faang.user_service.entity.UserProfilePic;
 import school.faang.user_service.mapper.user.UserMapperImpl;
+import school.faang.user_service.publisher.profile_pic.ProfilePicEventPublisher;
 import school.faang.user_service.publisher.user.SearchAppearanceEventPublisher;
 import school.faang.user_service.repository.CountryRepository;
 import school.faang.user_service.repository.UserRepository;
@@ -31,6 +33,7 @@ import school.faang.user_service.validator.user.UserValidator;
 
 import java.io.ByteArrayInputStream;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Stream;
 import java.time.LocalDateTime;
@@ -40,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -80,6 +84,9 @@ class UserServiceTest {
     private S3Service s3Service;
 
     @Mock
+    private ProfilePicEventPublisher eventPublisher;
+
+    @Mock
     private PasswordGenerator passwordGenerator;
 
     @Mock
@@ -98,7 +105,21 @@ class UserServiceTest {
     }
 
     @Test
-    void testDeactivateUser_Success() {
+    public void testCreateUser() {
+        String acceptLanguage = "en_US";
+        when(userMapper.toUser(new UserDto())).thenReturn(user);
+
+        userService.createUser(new UserDto(), acceptLanguage);
+
+        Locale locale = Locale.forLanguageTag(acceptLanguage);
+        user.setLocale(locale.toLanguageTag());
+
+        assertNotNull(locale);
+        verify(userRepository, times(1)).save(user);
+    }
+
+    @Test
+    public void testDeactivateUser_Success() {
         user.setActive(true);
 
         when(userValidator.validateUser(userId)).thenReturn(user);
@@ -187,6 +208,8 @@ class UserServiceTest {
 
         verify(s3Service, times(1)).uploadFile(file, user);
         verify(userRepository, times(1)).save(user);
+        ProfilePicEvent picEvent = new ProfilePicEvent(userId, user.getUserProfilePic().getFileId());
+        verify(eventPublisher).publish(picEvent);
     }
 
     @Test
