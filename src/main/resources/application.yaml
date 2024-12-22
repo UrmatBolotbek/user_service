@@ -31,6 +31,8 @@ spring:
         event-start-reminder-event-channel: event-start-reminder-event-channel
         search-appearance-channel: search-appearance-topic
         recommendation-received-channel: recommendation-received
+        project-follower-channel: project-follower-channel
+
         profile-pic-channel: profile-pic-channel
         recommendation-channel: recommendation-given
         premium-bought-channel: premium-bought

@@ -2,8 +2,11 @@ package school.faang.user_service.repository;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import school.faang.user_service.entity.ProjectSubscription;
+
+import java.util.Optional;
 
 @Repository
 public interface ProjectSubscriptionRepository extends CrudRepository<ProjectSubscription, Long> {
@@ -14,4 +17,6 @@ public interface ProjectSubscriptionRepository extends CrudRepository<ProjectSub
     @Query(nativeQuery = true,
             value = "insert into project_subscription  (follower_id, project_id) values (:followerId, :projectId)")
     void followProject(long followerId, long projectId);
+    @Query("SELECT p.creatorId FROM Project p WHERE p.id = :projectId")
+    Optional<Long> findCreatorIdByProjectId(@Param("projectId") Long projectId);
 }
