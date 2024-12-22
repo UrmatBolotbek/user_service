@@ -172,5 +172,8 @@ public class User {
     @Enumerated(EnumType.STRING)
     private PreferredContact preference;
 
+    @Column(name = "banned", nullable = false)
+    private boolean banned;
+
     private String locale;
 }

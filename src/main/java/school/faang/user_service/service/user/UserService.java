@@ -14,6 +14,7 @@ import school.faang.user_service.config.context.UserContext;
 import school.faang.user_service.dto.user.SearchAppearanceEvent;
 import school.faang.user_service.dto.user.UserDto;
 import school.faang.user_service.dto.user.UserFilterDto;
+import school.faang.user_service.dto.user.UserForBanEventDto;
 import school.faang.user_service.entity.Country;
 import school.faang.user_service.entity.User;
 import school.faang.user_service.entity.UserProfilePic;
@@ -183,6 +184,13 @@ public class UserService {
             log.error("An error occurred while interacting with a file {}", file.getOriginalFilename(), error);
             throw new RuntimeException(error);
         }
+    }
+
+    @Transactional
+    public void banUser(UserForBanEventDto event) {
+        User user = userRepository.getReferenceById(event.getId());
+        user.setBanned(true);
+        userRepository.save(user);
     }
 
     private void createNewUserFromPerson(PersonFromFile personFromFile) {
