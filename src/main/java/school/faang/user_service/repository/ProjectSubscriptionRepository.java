@@ -17,8 +17,6 @@ public interface ProjectSubscriptionRepository extends JpaRepository<ProjectSubs
     @Query(nativeQuery = true,
             value = "insert into project_subscription  (follower_id, project_id) values (:followerId, :projectId)")
     void followProject(long followerId, long projectId);
-
-    @Query("SELECT p.follower.id FROM ProjectSubscription p WHERE p.projectId = :projectId")
     Optional<Long> findFollowerIdByProjectId(@Param("projectId") Long projectId);
 
 }
