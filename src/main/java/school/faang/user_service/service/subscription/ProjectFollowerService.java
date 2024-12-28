@@ -17,8 +17,7 @@ public class ProjectFollowerService {
     public void subscribeToProject(Long userId, Long projectId) {
         log.info("Subscribing user {} to project {}", userId, projectId);
 
-        Long creatorId = projectRepository.findCreatorIdByProjectId(projectId)
-                .orElseThrow(() -> new IllegalArgumentException("Project not found with ID: " + projectId));
+        Long creatorId = projectRepository.findFollowerIdByProjectId(projectId).orElseThrow(() -> new IllegalArgumentException("Project not found with ID: " + projectId));
         // TODO реализовать метод подписки на проект
         projectFollowerEventPublisher.publish(new ProjectFollowerEvent(projectId,userId, creatorId));
     }
